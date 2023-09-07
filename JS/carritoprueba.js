@@ -1,215 +1,103 @@
-const productos = [
-    { nombre : "harina", precio : 50},
-    { nombre : "agua", precio : 20},
-    { nombre : "galletas", precio : 30},
-    { nombre : "desodorante", precio : 10},
-];
+const shopContenido = document.getElementById("shopContenido");
+const verCarrito = document.getElementById("verCarrito");
+const modalContainer = document.getElementById("modalContainer");
 
-let carrito = []
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-let seleccion = prompt("¿ Deseas comprar algun producto ? si o no.")
+productos.forEach((product) => {
+    let contenido = document.createElement("div");
+    contenido.className = "card";
+    contenido.innerHTML = `
+    <img class="imagen" src="${product.img}">
+    <h3 class="nombre">${product.nombre}</h3>
+    <p class="precio">$ ${product.precio}</p>
+    `;
+    shopContenido.append(contenido);
 
-while (seleccion != "si" && seleccion != "no"){
-    alert("por favor ingrese si o no")
-    seleccion = prompt ("¿ Deseas comprar algun producto ? si o no.")
-}
+    let boton = document.createElement("button")
+    boton.innerText= "Adquirir";
+    boton.className = "boton";
+    contenido.append(boton);
 
+    boton.addEventListener("click", () => {
+        carrito.push({
+            id : product,
+            img : product.img,
+            nombre : product.nombre,
+            precio : product.precio,
+            })
+            console.log(carrito)
 
-if(seleccion == "si"){
-    alert("a continuacion nuestra lista de productos")
-    let listaMercado = productos.map ((producto) => producto.nombre + " " + producto.precio + "$");
-    alert(listaMercado.join(" - "))
-}else if(seleccion == "no"){
-    alert("gracias por su visita.")
-}
+    })
+})
 
+const rellenarCarrito = () =>{
+    modalContainer.innerHTML="";
+    modalContainer.style.display = "flex";
+    // HEADER 
+    const modalHeader = document.createElement("div");
+    modalHeader.className = "modal-header";
+    modalHeader.innerHTML = `
+    <h1 class="modal-header-title">Carrito</h1>
+    `;
+    modalContainer.append(modalHeader);
 
-while(seleccion != "no"){
-    let producto = prompt("agrega un producto a tu carrito")
-    let precio = 0
+    const modalBoton = document.createElement("h1");
+    modalBoton.innerText = "X";
+    modalBoton.className = "modal-header-boton";
 
-if (producto == "harina" || producto == "agua" || producto == "galletas" || producto == "desodorante"){
-    switch (producto){
-        case "harina":
-            precio = 50
-            break;
-        case "agua":
-            precio = 20
-            break;
-        case "galletas":
-            precio = 30
-            break;
-        case "desodorante":
-            precio = 10
-            break;
-        default:
-        break;                
-        }
-    let unidades = parseInt(prompt("Cuantas unidades desea llevar?"))  
-    
-    carrito.push({producto, unidades, precio})
-    console.log (carrito)
-    } else {
-    alert("no tenemos ese producto")   
-    }
+    modalBoton.addEventListener("click", () => {
+        modalContainer.style.display = "none";
+    });
 
-    seleccion = prompt("desea seguir comprando ?")
+    modalHeader.append(modalBoton);
 
+    //CONTENIDO
+    carrito.forEach((product) => {
+    const carritoContenido = document.createElement ("div");
+    carritoContenido.className = "carrito-contenido";
+    carritoContenido.innerHTML =`
+    <img src="${product.img}">
+    <h3>${product.nombre}</h3>
+    <p>${product.precio}</p>
+    `;
 
-    while (seleccion === "no"){
-        alert("gracias por su compra, vuela pronto.")
-        carrito.forEach((carritoFinal) => {
-            console.log (`producto : ${carritoFinal.producto}, unidades : ${carritoFinal.unidades}, precio total a pagar por producto: ${carritoFinal.unidades * carritoFinal.precio}`)
-        })
-        break;
-    }
+    modalContainer.append(carritoContenido);
 
-}
-const total = carrito.reduce ((acc,el) => acc + el.precio * el.unidades, 0)
-console.log(`el total a pagar x su compra es : ${total}`)
+    const eliminar = document.createElement("span");
+    eliminar.innerText = "❌"
+    eliminar.className = "eliminar-producto";
+    carritoContenido.append(eliminar);
 
+    eliminar.addEventListener("click", eliminarProducto);
+    })  
 
-// class Animal {
-//     constructor(especie, nombre, edad,) {
-//         this.especie = especie
-//         this.nombre  = nombre;
-//         this.edad = edad;
-        
-//     }  
-// }
-// const Samu = new Animal ("perruno", "Samu", "10");
-// const Manolo = new Animal ("perruno", "Samu", "10");
-// const Pata = new Animal ("perruno", "Pata", "10");
+    // TOTAL
+    const total = carrito.reduce((acc,el) => acc + el.precio, 0)
+    const totalComprando = document.createElement("div");
+    totalComprando.className = "total-comprando";
+    totalComprando.innerHTML = `total a pagar ${total}`;
+    modalContainer.append(totalComprando);
 
+    saveLocal();
+};
 
-// alert("Ingrese el 'codigo' del producto que desea llevar. Para salir ingrese 'FIN'. ")
+verCarrito.addEventListener("click", rellenarCarrito);
 
+const eliminarProducto = () => {
+    const foundId = carrito.find((element) => element.id);
+    carrito = carrito.filter((carritoId) => {
+        return carritoId !== foundId;
+    });
 
+    rellenarCarrito();
+    saveLocal();
+};
 
-// let total = 0;
+const saveLocal = () => {
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+};
 
-// const cantidad = (cantidad, precio) => {
-//     return cantidad * precio
-// }
-
-// let comprar = prompt("Desea comprar algún producto en nuestra tienda? Si - No");
-// let seleccionarProducto = prompt(" (RAA) Remera Adidas azul - $4000 // (RAV) Remera Adidas verde - $4000 // (RAB) Remera Adidas blanco - $4500 // ¨FIN¨ para salir.");
-
-// while(comprar != "No") {
-//     switch (seleccionarProducto) {
-//         case "RAA":
-//             seleccionarCantidad = Number(prompt("Ingreso el codigo de Remera Adidas azul, ingrese el numero de la cantidad que desea llevar."));
-//             total += cantidad(seleccionarCantidad, 4500);
-                       
-//             break;
-//         case "RAV":
-//             seleccionarCantidad = Number(prompt("Ingreso el codigo de Remera Adidas verde, ingrese el numero de la cantidad que desea llevar."));
-//             total += cantidad(seleccionarCantidad, 4000);
-//             break;
-//         case "RAB":
-//             seleccionarCantidad = Number(prompt("Ingreso el codigo de Remera Adidas blanco, ingrese el numero de la cantidad que desea llevar."));
-//             total += cantidad(seleccionarCantidad, 4500);
-
-//             break;
-//     }
-//     comprar = prompt("Desea seguir comprando? Si - No");
-
-    
-    
-// }
-// alert("El total de la compra es de " + total + ", gracias por su visita vuelva pronto.");
-
-
-
-// var arrayAnimales = [];
-// do{
-//     var Ingreso = prompt("Ingrese la especie del animal que desea adoptar o fin para salir.")
-//     if (Ingreso === fin || Ingreso === FIN || Ingreso === Fin){
-//         break;
-//     }else{
-//         especie = Ingreso;
-//         var especie = prompt("Ingrese la especie  del animal");
-//         var nombre = prompt ("Ingrese el nombre del animal");
-//         var raza = prompt ("Ingrese la raza del animal");
-//         var edad = prompt ("Ingrese la edad");
-//         var color = prompt ("Ingrese el color");
-//         var tamanio = prompt ("Ingrese el tamaño");
-//         arrayAnimales.push(new Animal ("perruno", "Samu", "retriever", "10", "amarillo", "mediano"))
-//     }
-// }
-// while (Ingreso != fin || Ingreso != FIN || Ingreso != Fin)
-
-// console.log(arrayAnimales);
-
-// for (var Animales of arrayAnimales){
-//     document.write("La especie que ustede lleva es" + Animal.especie)
-//     document.write("El nombre de su nuevo amigo es" + Animal.nombre)
-//     document.write("La raza de su animal es" + Animal.raza)
-//     document.write("La edad de su nueva mascota es" + Animal.edad)
-//     document.write("El color es" + Animal.color)
-//     document.write("El tamaño es" + Animal.tamanio)
-// }
-
-// console.log(Animal.especie);
-// console.log(Animal.nombre);
-// console.log(Animal.raza);
-// console.log(Animal.edad);
-// console.log(Animal.color);
-// console.log(Animal.tamanio);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// alert("Ingrese el 'codigo' del producto que desea llevar. Para salir ingrese 'FIN'. ")
-
-
-
-// let total = 0;
-
-// const cantidad = (cantidad, precio) => {
-//     return cantidad * precio
-// }
-
-// let comprar = prompt("Desea comprar algún producto en nuestra tienda? Si - No");
-// let seleccionarProducto = prompt(" (RAA) Remera Adidas azul - $4000 // (RAV) Remera Adidas verde - $4000 // (RAB) Remera Adidas blanco - $4500 // ¨FIN¨ para salir.");
-
-// while(comprar != "No") {
-//     switch (seleccionarProducto) {
-//         case "RAA":
-//             seleccionarCantidad = Number(prompt("Ingreso el codigo de Remera Adidas azul, ingrese el numero de la cantidad que desea llevar."));
-//             total += cantidad(seleccionarCantidad, 4500);
-                       
-//             break;
-//         case "RAV":
-//             seleccionarCantidad = Number(prompt("Ingreso el codigo de Remera Adidas verde, ingrese el numero de la cantidad que desea llevar."));
-//             total += cantidad(seleccionarCantidad, 4000);
-//             break;
-//         case "RAB":
-//             seleccionarCantidad = Number(prompt("Ingreso el codigo de Remera Adidas blanco, ingrese el numero de la cantidad que desea llevar."));
-//             total += cantidad(seleccionarCantidad, 4500);
-
-//             break;
-//     }
-//     comprar = prompt("Desea seguir comprando? Si - No");
-
-    
-    
-// }
-// alert("El total de la compra es de " + total + ", gracias por su visita vuelva pronto.");
 
 
 

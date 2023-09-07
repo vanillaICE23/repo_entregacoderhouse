@@ -1,0 +1,30 @@
+const productos = [
+    {
+        id : 1,
+        nombre : "Camiseta de Chicago",
+        precio : 30000,
+        img : "/images/camiseta_chicagobulls.jpg",
+
+    },
+    {
+        id : 2,
+        nombre : "Camiseta de Los Angeles",
+        precio : 40000,
+        img : "/images/camiseta_loslakers.jpg",
+
+    },
+    {
+        id : 3,
+        nombre : "Camiseta de Utah",
+        precio : 35000,
+        img : "/images/camiseta_utah.jpg",
+
+    },
+    {
+        id : 4,
+        nombre : "Camiseta de Miami",
+        precio : 40000,
+        img : "/images/camiseta_miami.jpg",
+
+    },
+];
