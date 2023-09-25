@@ -70,7 +70,7 @@ const getProducts = async ()=> {
         const carritoContenido = document.createElement ("div");
         carritoContenido.className = "carrito-contenido";
         carritoContenido.innerHTML =`
-        <img src="${product.img}">
+        <img alt="camiseta de basquet" src="${product.img}">
         <h3>${product.nombre}</h3>
         <p>${product.precio}</p>
         `;
