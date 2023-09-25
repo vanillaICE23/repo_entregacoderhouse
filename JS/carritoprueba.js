@@ -12,7 +12,7 @@ const getProducts = async ()=> {
         let contenido = document.createElement("div");
         contenido.className = "card";
         contenido.innerHTML = `
-        <img class="imagen" src="${product.img}">
+        <img alta="camiseta de basquet" class="imagen" src="${product.img}">
         <h3 class="nombre">${product.nombre}</h3>
         <p class="precio">$ ${product.precio}</p>
         `;
